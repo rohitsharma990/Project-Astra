@@ -1,0 +1,12 @@
+colorama
+requests
+psutil
+pyautogui
+Pillow
+SpeechRecognition
+pyttsx3
+PyAudio
+vosk
+sounddevice
+python-dotenv
+pywin32
