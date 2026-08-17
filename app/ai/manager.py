@@ -65,9 +65,13 @@ class AIManager:
                 "Nova AI is temporarily unavailable. Please try again in a moment."
             )
 
+        if response is None or not str(response).strip():
+            logger.warning("AI provider returned an empty response; conversation history was not updated.")
+            return "Nova AI did not return a valid response. Please try again."
+
         self._conversation.add_user_message(prompt)
-        self._conversation.add_assistant_message(response)
-        return response
+        self._conversation.add_assistant_message(str(response))
+        return str(response)
 
     def get_conversation_history(self) -> list:
         return self._conversation.get_history()
@@ -81,3 +85,7 @@ _manager = AIManager()
 
 def ask_ai(prompt: str) -> str:
     return _manager.ask_ai(prompt)
+
+
+def clear_ai_history() -> None:
+    _manager.clear_history()

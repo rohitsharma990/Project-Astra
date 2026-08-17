@@ -32,7 +32,7 @@ from .weather import get_weather
 from .file_search import find_files
 from .music import music_control
 from .system_control import shutdown, restart, lock, sleep
-from .ai import ask_ai
+from .ai import ask_ai, clear_ai_history
 from . import ui
 
 
@@ -211,6 +211,16 @@ def _handle_memory(words: Sequence[str]) -> bool:
     if _starts_with(words, "delete", "memory"):
         title = " ".join(words[2:]).strip() or None
         delete_memory(title)
+        return True
+
+    if _starts_with(words, "clear", "memory") or _starts_with(words, "clear", "history"):
+        clear_ai_history()
+        ui.assistant_message("Conversation memory cleared.")
+        return True
+
+    if _starts_with(words, "forget", "conversation") or _starts_with(words, "forget", "memory"):
+        clear_ai_history()
+        ui.assistant_message("Conversation memory cleared.")
         return True
 
     return False

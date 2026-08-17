@@ -19,13 +19,21 @@ class OllamaClient:
         self.timeout = config.timeout
 
     def ask(self, user_input: str, history: Optional[List[Dict[str, str]]] = None) -> str:
-        # Limit history to the most recent entries and cap sizes to avoid huge prompts
-        MAX_HISTORY_MESSAGES = 6
+        # Keep the latest 10 conversation turns and cap sizes to avoid huge prompts.
+        MAX_HISTORY_MESSAGES = 10
         MAX_TOTAL_CHARS = 4000
         MAX_MESSAGE_CHARS = 1000
 
         history_list = list(history or [])
-        recent_history = history_list[-MAX_HISTORY_MESSAGES:]
+        if (
+            history_list
+            and history_list[-1].get("role") == "user"
+            and history_list[-1].get("content") == user_input
+        ):
+            recent_history = history_list[-MAX_HISTORY_MESSAGES:]
+        else:
+            recent_history = history_list[-(MAX_HISTORY_MESSAGES - 1):]
+            recent_history.append({"role": "user", "content": user_input})
 
         # Truncate individual messages to a reasonable size (keep the tail of messages)
         trimmed_history: List[Dict[str, str]] = []
@@ -35,12 +43,11 @@ class OllamaClient:
                 content = content[-MAX_MESSAGE_CHARS:]
             trimmed_history.append({"role": m.get("role", "user"), "content": content})
 
-        # Build final messages: single system prompt, trimmed history, and the user prompt
+        # Build final messages: single system prompt and all recent context, including the current user prompt once.
         messages: List[Dict[str, str]] = [
             {"role": "system", "content": SYSTEM_PROMPT},
         ]
         messages.extend(trimmed_history)
-        messages.append({"role": "user", "content": user_input})
 
         # Enforce a total character budget by dropping oldest history messages if needed
         def total_chars(msgs: List[Dict[str, str]]) -> int:

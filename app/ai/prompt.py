@@ -1,5 +1,7 @@
 from typing import Dict, List
 
+MAX_HISTORY_MESSAGES = 10
+
 SYSTEM_PROMPT = (
     "You are Nova, the AI assistant inside Astra. "
     "Answer the user's question directly and naturally. "
@@ -13,10 +15,21 @@ SYSTEM_PROMPT = (
 
 
 def build_chat_messages(user_input: str, history: List[Dict[str, str]]) -> List[Dict[str, str]]:
+    history_entries = list(history or [])
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT},
     ]
-    # Only include the latest history entries to keep requests lightweight.
-    messages.extend(history[-6:])
+
+    if (
+        history_entries
+        and history_entries[-1].get("role") == "user"
+        and history_entries[-1].get("content") == user_input
+    ):
+        messages.extend(history_entries[-MAX_HISTORY_MESSAGES:])
+        return messages
+
+    # Keep only the latest conversation entries so each request stays lightweight and contextual.
+    if history_entries:
+        messages.extend(history_entries[-(MAX_HISTORY_MESSAGES - 1):])
     messages.append({"role": "user", "content": user_input})
     return messages
