@@ -24,8 +24,25 @@ def show_time():
     try:
         import datetime
         now = datetime.datetime.now()
-        ui.info("Current date and time:")
-        ui.info(now.strftime("%Y-%m-%d %H:%M:%S"))
+        ui.assistant_message(f"The current time is {now.strftime('%I:%M %p')}.")
+    except Exception as err:
+        ui.error(f"something went wrong {err}")
+
+
+def show_date():
+    try:
+        import datetime
+        today = datetime.date.today()
+        ui.assistant_message(f"Today's date is {today.strftime('%B %d, %Y')}.")
+    except Exception as err:
+        ui.error(f"something went wrong {err}")
+
+
+def show_day():
+    try:
+        import datetime
+        today = datetime.date.today()
+        ui.assistant_message(f"Today is {today.strftime('%A')}.")
     except Exception as err:
         ui.error(f"something went wrong {err}")
 

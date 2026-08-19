@@ -10,3 +10,4 @@ vosk
 sounddevice
 python-dotenv
 pywin32
+pycaw
