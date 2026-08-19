@@ -11,6 +11,7 @@ except Exception:
     pass
 
 from . import speaker
+from .response import clean_response
 
 init(autoreset=True)
 
@@ -20,16 +21,17 @@ LIGHT = "───────────────────────�
 
 
 def _emit(message: str, color: str, prefix: str = "", tts: bool = False):
-    replay = str(message)
+    replay = clean_response(message)
     print(color + prefix + Style.BRIGHT + replay)
     if tts:
         speak(replay, block=True, force=True)
 
 
 def speak(text: str, block: bool = True, force: bool = True):
-    replay = str(text)
+    replay = clean_response(text)
     logger.debug("UI speak() called with text=%s block=%s force=%s", replay[:100], block, force)
-    speaker.speak(replay, block=True, force=True)
+    if replay:
+        speaker.speak(replay, block=True, force=True)
     return replay
 
 
@@ -38,7 +40,9 @@ def user_message(message: str):
 
 
 def speak_assistant_reply(reply: object) -> str:
-    replay = str(reply)
+    replay = clean_response(reply)
+    if not replay:
+        return ""
     print(Fore.MAGENTA + Style.BRIGHT + f"🤖 Nova : {replay}")
     logger.debug("assistant reply converted to string for TTS: %s", replay[:100])
     speak(replay, block=True, force=True)

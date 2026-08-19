@@ -7,6 +7,7 @@ from .openrouter import OpenRouterClient
 from .ollama import OllamaClient
 from .groq import GroqClient
 from .gemini import GeminiClient
+from ..response import clean_response
 
 logger = logging.getLogger(__name__)
 
@@ -65,13 +66,14 @@ class AIManager:
                 "Nova AI is temporarily unavailable. Please try again in a moment."
             )
 
-        if response is None or not str(response).strip():
+        cleaned_response = clean_response(response)
+        if not cleaned_response:
             logger.warning("AI provider returned an empty response; conversation history was not updated.")
             return "Nova AI did not return a valid response. Please try again."
 
         self._conversation.add_user_message(prompt)
-        self._conversation.add_assistant_message(str(response))
-        return str(response)
+        self._conversation.add_assistant_message(cleaned_response)
+        return cleaned_response
 
     def get_conversation_history(self) -> list:
         return self._conversation.get_history()

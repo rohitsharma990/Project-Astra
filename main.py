@@ -50,6 +50,14 @@ def _start_input_thread(cmd_queue: queue.Queue):
     return t
 
 
+def _process_command(command: str) -> None:
+    try:
+        parse_command(command)
+    except Exception:
+        logger.exception("Command processing failed")
+        ui.error("I couldn't complete that command.", tts=True)
+
+
 ui.banner()
 ui.info("🎤 ASTRA Assistant Started")
 ui.info("Type a command or press Enter to speak.")
@@ -85,7 +93,7 @@ try:
                 Menuloop()
                 continue
 
-            parse_command(command)
+            _process_command(command)
             continue
 
         # No typed command — check wake-word
@@ -161,7 +169,7 @@ try:
                 wake_word.start()
                 continue
 
-            parse_command(command)
+            _process_command(command)
 
             # After processing, resume wake listening
             logger.info("[ASTRA] Command processed, restarting wake-word detector")

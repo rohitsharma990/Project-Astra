@@ -11,12 +11,14 @@ START_MENU_PATHS = [
 def open_notepad():
     try:
         subprocess.Popen(["notepad.exe"])
+        ui.assistant_message("Opening Notepad.")
     except Exception as err:
         ui.error(f"something went wrong {err}")
 
 def open_calculator():
     try:
         subprocess.Popen(["calc.exe"])
+        ui.assistant_message("Opening Calculator.")
     except Exception as err:
         ui.error(f"something went wrong {err}")
 
@@ -49,6 +51,7 @@ def show_day():
 def open_vs_code():
     try:
         subprocess.Popen(["code"])
+        ui.assistant_message("Opening Visual Studio Code.")
     except Exception as err:
         ui.error(f"something went wrong {err}")
 

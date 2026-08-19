@@ -252,43 +252,47 @@ def _handle_volume(words):
     if not words:
         return False
 
-    if words[0] in {"mute", "unmute"}:
-        action = mute if words[0] == "mute" else unmute
-        action()
-        ui.assistant_message(f"Volume {'muted' if words[0] == 'mute' else 'unmuted'}.")
-        return True
+    try:
+        if words[0] in {"mute", "unmute"}:
+            action = mute if words[0] == "mute" else unmute
+            action()
+            ui.assistant_message(f"Volume {'muted' if words[0] == 'mute' else 'unmuted'}.")
+            return True
 
-    direction_actions = {
-        "up": volume_up,
-        "increase": volume_up,
-        "louder": volume_up,
-        "down": volume_down,
-        "decrease": volume_down,
-        "quieter": volume_down,
-    }
-    if words[0] == "volume" and len(words) > 1 and words[1] in direction_actions:
-        level = direction_actions[words[1]]()
+        direction_actions = {
+            "up": volume_up,
+            "increase": volume_up,
+            "louder": volume_up,
+            "down": volume_down,
+            "decrease": volume_down,
+            "quieter": volume_down,
+        }
+        if words[0] == "volume" and len(words) > 1 and words[1] in direction_actions:
+            level = direction_actions[words[1]]()
+            ui.assistant_message(f"Volume set to {level}%.")
+            return True
+
+        if "volume" not in words:
+            return False
+
+        number = next((word for word in words if word.isdigit()), None)
+        if number is None:
+            if words[0] in {"set", "volume"}:
+                ui.error("Please specify a volume between 0 and 100.")
+                return True
+            return False
+
+        level = int(number)
+        if not 0 <= level <= 100:
+            ui.error("Volume must be between 0 and 100.")
+            return True
+
+        set_volume(level)
         ui.assistant_message(f"Volume set to {level}%.")
         return True
-
-    if "volume" not in words:
-        return False
-
-    number = next((word for word in words if word.isdigit()), None)
-    if number is None:
-        if words[0] in {"set", "volume"}:
-            ui.error("Please specify a volume between 0 and 100.")
-            return True
-        return False
-
-    level = int(number)
-    if not 0 <= level <= 100:
-        ui.error("Volume must be between 0 and 100.")
+    except Exception as err:
+        ui.error(str(err))
         return True
-
-    set_volume(level)
-    ui.assistant_message(f"Volume set to {level}%.")
-    return True
 
 
 def _handle_system(words):
@@ -336,6 +340,7 @@ def parse_command(command: str) -> None:
     if not command:
         return
 
+    explicit_open = bool(re.match(r"^\s*(?:open|launch|start|run)\b", command, re.IGNORECASE))
     normalized = _normalize_text(command)
     words = normalized.split()
 
@@ -363,6 +368,10 @@ def parse_command(command: str) -> None:
     target = _target(words)
     if target:
         _open_target(target)
+        return
+
+    if explicit_open and words:
+        open_app(" ".join(words))
         return
 
     if words[0] == "search":

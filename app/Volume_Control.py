@@ -1,7 +1,12 @@
-from pycaw.pycaw import AudioUtilities
+try:
+    from pycaw.pycaw import AudioUtilities
+except ImportError:
+    AudioUtilities = None
 
 
 def _get_volume():
+    if AudioUtilities is None:
+        raise RuntimeError("Volume control is unavailable; install pycaw to enable it.")
     device = AudioUtilities.GetSpeakers()
     return getattr(device, "EndpointVolume")
 

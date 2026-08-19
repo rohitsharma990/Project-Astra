@@ -1,6 +1,5 @@
 import json
 import logging
-import re
 import time
 from typing import Any, Dict, List, Optional
 
@@ -160,27 +159,4 @@ class OllamaClient:
                 "Nova received an empty response from Ollama."
             )
 
-        return self._clean_assistant_message(content)
-
-    def _clean_assistant_message(self, content: str) -> str:
-        cleaned = content.strip()
-        if not cleaned:
-            return cleaned
-
-        # Ignore any separate thinking/reasoning field if present by only using content.
-        # Remove accidental assistant prefixes while preserving normal answer text.
-        cleaned = re.sub(
-            r'^(?:final answer|answer)\s*[:\-–—]?\s*',
-            '',
-            cleaned,
-            flags=re.IGNORECASE,
-        )
-
-        cleaned = re.sub(
-            r'^(?:let me think|let me consider|okay(?:,)? the user asked|first(?:,)? i need to|i should mention|let me draft|one moment|hold on|thinking)(?:[\s\.\,!;:\-–—]+)',
-            '',
-            cleaned,
-            flags=re.IGNORECASE,
-        ).lstrip()
-
-        return cleaned.strip()
+        return content
