@@ -1,0 +1,26 @@
+# Generated / local UI artifacts
+node_modules/
+package-lock.json
+.vite/
+.pytest_cache/
+__pycache__/
+*.pyc
+*.pyo
+*.log
+
+# Debug / diagnostic artifacts
+DIAGNOSTIC_*.md
+DRAG_BUG_*.md
+DRAG_FIX_*.md
+inspect_glb.js
+diagnostic_output.log
+test_output.log
+RANDOM
+Logs/
+
+# Duplicated workspace copies created during troubleshooting
+/data/
+/data/**
+
+auto-generated bundle
+vendor/astra.bundle.js

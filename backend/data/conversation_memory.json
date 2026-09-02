@@ -1,0 +1,42 @@
+[
+  {
+    "role": "user",
+    "content": "What is Python?"
+  },
+  {
+    "role": "assistant",
+    "content": "Python answer"
+  },
+  {
+    "role": "user",
+    "content": "What is my name?"
+  },
+  {
+    "role": "assistant",
+    "content": "Your name is Rohit."
+  },
+  {
+    "role": "user",
+    "content": "What is my name?"
+  },
+  {
+    "role": "assistant",
+    "content": "I don't know your name yet."
+  },
+  {
+    "role": "user",
+    "content": "What is Python?"
+  },
+  {
+    "role": "assistant",
+    "content": "model answer"
+  },
+  {
+    "role": "user",
+    "content": "hay astra"
+  },
+  {
+    "role": "assistant",
+    "content": "Astra is an AI assistant developed by the OpenAI team. It is designed to help with a wide range of tasks, including answering questions, writing code, providing explanations, and more. Astra is trained on a large amount of text data and can perform various tasks with high accuracy."
+  }
+]

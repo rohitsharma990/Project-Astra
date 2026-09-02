@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Astra Companion</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main id="stage" aria-label="Astra desktop companion">
+    <div id="status" class="status hidden"></div>
+    <div id="loading" class="loading">Loading Astra</div>
+    <canvas id="scene"></canvas>
+    <div id="speaking" class="speaking hidden"><span></span> speaking</div>
+    <section id="chat" class="panel hidden" aria-label="Astra chat">
+      <header><div><strong>ASTRA</strong><small id="state">ready</small></div><button id="close-chat" title="Close chat">x</button></header>
+      <div id="messages" class="messages"></div>
+      <form id="chat-form"><input id="chat-input" autocomplete="off" placeholder="Ask Astra anything..."><button id="chat-mic" type="button" title="Use microphone">Mic</button><button title="Send message">Send</button></form>
+    </section>
+    <aside id="approval" class="panel approval hidden">
+      <header><div><strong>Approval needed</strong><small>Backend action paused</small></div></header>
+      <p id="approval-goal"></p><div id="approval-steps"></div>
+      <footer><button id="reject">Reject</button><button id="approve" class="primary">Approve</button></footer>
+    </aside>
+    <nav id="menu" class="context hidden" aria-label="Astra menu">
+      <div class="menu-name">ASTRA <span>voice companion</span></div>
+      <button data-action="talk">Talk / Listen</button><button data-action="pause">Pause</button><button data-action="settings">Settings</button><button data-action="reset">Reset position</button><button data-action="top">Always on top</button><button data-action="edge">Edge behavior</button>
+      <button data-action="small">Small size</button><button data-action="normal">Normal size</button><button data-action="large">Large size</button>
+      <button data-action="exit" class="danger">Exit</button>
+    </nav>
+  </main>
+  <script src="qrc:/qtwebchannel/qwebchannel.js"></script>
+  <script>
+    window.DEBUG_UI = false;
+    window.onerror = (message, source, line, column) => console.error(`Page script error: ${message} (${source}:${line}:${column})`);
+    window.addEventListener('unhandledrejection', event => console.error(`Page promise error: ${event.reason}`));
+    window.__astraPending = { settings: [], status: [], event: [], transcript: [], response: [] };
+    window.astraSettings = value => window.__astraPending.settings.push(value);
+    window.astraStatus = value => window.__astraPending.status.push(value);
+    window.astraEvent = value => window.__astraPending.event.push(value);
+    window.astraTranscript = value => window.__astraPending.transcript.push(value);
+    window.astraResponse = value => window.__astraPending.response.push(value);
+    if (window.DEBUG_UI) console.info('ASTRA_UI_READY');
+  </script>
+  <script type="module">
+    import('./vendor/astra.bundle.js').catch(error => {
+      window.astraModuleError = String(error?.stack || error);
+      console.error(`Astra module load error: ${window.astraModuleError}`);
+    });
+  </script>
+</body>
+</html>
