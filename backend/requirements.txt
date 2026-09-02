@@ -1,0 +1,13 @@
+# Required by the current typed-command backend.
+requests
+psutil
+pyautogui
+Pillow
+pycaw
+
+# Optional integrations. The backend starts in degraded mode without these.
+colorama
+pyttsx3
+pywin32
+vosk
+sounddevice
